@@ -77,7 +77,7 @@ def read_schonherz():
     # Összes álláskártya (div.col-md-8)
     jobs = soup.find_all("div", class_="col-md-8")
 
-    seen_links = load_seen_links()
+    seen_links = load_seen_links("seen_jobs_schonherz.txt")
 
     jobs_collected = []  
 
