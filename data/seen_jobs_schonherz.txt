@@ -8,3 +8,11 @@
 /diakmunka/budapest/fejleszto---tesztelo/40847-rendszermernok-gyakornok
 /diakmunka/budapest/fejleszto---tesztelo/40776-szoftverfejleszto/diakmunka/budapest/fejleszto---tesztelo/40774-full-stack-fejleszto
 /diakmunka/budapest/fejleszto---tesztelo/40729-frontend-fejleszto
+/diakmunka/budapest/fejleszto---tesztelo/40776-szoftverfejleszto
+/diakmunka/budapest/fejleszto---tesztelo/40774-full-stack-fejleszto
+/diakmunka/budapest/fejleszto---tesztelo/40713-machine-learning-engineer-intern
+/diakmunka/budapest/fejleszto---tesztelo/40636-fejlesztomernok
+/diakmunka/budapest/fejleszto---tesztelo/39973-power-platform-gyakornok
+/diakmunka/budapest/fejleszto---tesztelo/40906-ai-platform-operations-intern-ai-data-innovation-tribe
+/diakmunka/budapest/fejleszto---tesztelo/40905-data-analyst-intern
+/diakmunka/budapest/fejleszto---tesztelo/40904-operation-intern-dataflow-monitoring-and-deployment-squad
