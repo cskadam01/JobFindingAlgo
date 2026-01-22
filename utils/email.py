@@ -9,7 +9,7 @@ load_dotenv()
 backend_base_url = os.getenv("BACKEND_URL")
 
 def send_job_email(job):
-    subject = f"Új állás: {job.get('title')} ({job.get('ai_recommendation_1_10')}/10)"
+    subject = f"Új állás: {job.get('title')} ({job.get('ai_recommendation_1_10')}/10)"#
     job_id = job.get("link")  # egyszerű azonosító
     yes_url = f"{backend_base_url}/label?job_id={job_id}&label=1"
     no_url = f"{backend_base_url}/label?job_id={job_id}&label=0"
