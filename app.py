@@ -1,11 +1,11 @@
-from app import FastAPI
+from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 from pathlib import Path
 import json
 
 app = FastAPI()
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR / "data"
 DATA_DIR.mkdir(exist_ok=True)
 LABELS_PATH = DATA_DIR / "labels.json"

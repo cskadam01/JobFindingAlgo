@@ -2,6 +2,7 @@ from sites.schonherz import read_schonherz
 from sites.muisz import read_muisz
 from utils.converter import convert_to_xlsx
 from utils.relevance import is_relevant
+from utils.email import send_job_email
 from ai.scorer import score_jobs
 import json
 from pathlib import Path
@@ -33,17 +34,17 @@ def save_labels(labels: dict) -> None:
 
 def ask_label(job: dict) -> int | None:
     # short, stable prompt
-    print("\n---")
-    print("Cím:" "\n" ,  job.get("title"), )
-    print("Hely:" "\n" ,  job.get("place"), "\n" )
-    print("Link:" "\n" , job.get("link"), "\n" )
-    print("Leírás:" "\n" , emoji_newlines(job.get("desc") ), "\n")
-    ans = input("Releváns? (y/n/skip): ").strip().lower()
-    if ans == "y":
-        return 1
-    if ans == "n":
-        return 0
-    return None
+     print("\n---")
+     print("Cím:" "\n" ,  job.get("title"), )
+     print("Hely:" "\n" ,  job.get("place"), "\n" )
+     print("Link:" "\n" , job.get("link"), "\n" )
+     print("Leírás:" "\n" , emoji_newlines(job.get("desc") ), "\n")
+     ans = input("Releváns? (y/n/skip): ").strip().lower()
+     if ans == "y":
+         return 1
+     if ans == "n":
+         return 0
+     return None
 
 def main():
     all_jobs = []
@@ -118,7 +119,13 @@ def main():
     # 3) Export AFTER scoring so Excel receives the filled AI fields
     convert_to_xlsx(scored_jobs)
 
+    print("ez most ami kell \n", scored_jobs)
+
+    # Send email for each new scored job
+    for job in scored_jobs:
+        send_job_email(job)
     print("Összes új állás:", len(all_jobs))
+
 
 
 
