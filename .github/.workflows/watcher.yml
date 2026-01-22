@@ -1,4 +1,4 @@
-name: Work Watcher
+name: Job Watcher
 
 on:
   schedule:
