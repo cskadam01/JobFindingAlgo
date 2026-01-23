@@ -2,7 +2,8 @@ name: Job Watcher
 
 on:
   schedule:
-    - cron: "0 */5 * * *"   # 5 óránként
+  
+  - cron: "*/10 * * * *"   # 5 óránként
   workflow_dispatch:       # manuálisan is futtatható
 
 jobs:
