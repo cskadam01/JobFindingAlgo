@@ -1,9 +1,11 @@
 name: Job Watcher
 
 on:
+  push:
+    branches: [ "main" ]
   schedule:
-    - cron: "*/2 * * * *"
-  workflow_dispatch:       # manuálisan is futtatható
+    - cron: "*/5 * * * *"
+  workflow_dispatch:      # manuálisan is futtatható
 
 jobs:
   run-watcher:
