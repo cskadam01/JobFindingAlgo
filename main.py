@@ -7,6 +7,14 @@ from ai.scorer import score_jobs
 import json
 from pathlib import Path
 import re
+from database.config import engine, Base
+import database.models
+from database.config import get_db
+from sqlalchemy.orm import Session
+from database.config import get_db
+from database.models import Label
+from database.config import SessionLocal
+
 
 def emoji_newlines(text: str) -> str:
     # minden emoji elé sortörést tesz (ha nincs)
@@ -32,19 +40,30 @@ def save_labels(labels: dict) -> None:
     LABELS_PATH.write_text(json.dumps(labels, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
-def ask_label(job: dict) -> int | None:
-    # short, stable prompt
-     print("\n---")
-     print("Cím:" "\n" ,  job.get("title"), )
-     print("Hely:" "\n" ,  job.get("place"), "\n" )
-     print("Link:" "\n" , job.get("link"), "\n" )
-     print("Leírás:" "\n" , emoji_newlines(job.get("desc") ), "\n")
-     ans = input("Releváns? (y/n/skip): ").strip().lower()
-     if ans == "y":
-         return 1
-     if ans == "n":
-         return 0
-     return None
+def save_to_db(job: dict, db: Session) -> int:
+    from database.models import Job
+
+    allowed = {
+        "source", "title", "link", "place", "wage", "desc",
+        "ai_score", "ai_feedback"
+    }
+
+    data = {k: v for k, v in job.items() if k in allowed}
+
+    existing = db.query(Job).filter(Job.link == data["link"]).first()
+
+    if existing:
+        for key, value in data.items():
+            setattr(existing, key, value)
+        db.commit()
+        return existing.id
+    else:
+        new_job = Job(**data)
+        db.add(new_job)
+        db.commit()
+        db.refresh(new_job)
+        return new_job.id
+
 
 def main():
     all_jobs = []
@@ -96,25 +115,16 @@ def main():
                 parts.append(f"ml_prob={job.get('ml_prob')}")
             job["ai_feedback"] = ", ".join(parts) if parts else None
 
-    # Ask you only for NEW jobs (by link) that don't have a saved label yet
-    for job in scored_jobs:
-        link = job.get("link")
-        if not link:
-            continue
+        db = SessionLocal()
+        try:
+            for job in scored_jobs:
+                job_id = save_to_db(job, db)
+                job["job_id"] = job_id
+        finally:
+            db.close()
+        
 
-        # if we already labeled this link earlier, reuse it
-        if link in labels:
-            job["is_relevant"] = labels[link]
-            continue
 
-        # ask now (only once per new link)
-        label = ask_label(job)
-        job["is_relevant"] = label
-        if label is not None:
-            labels[link] = label
-
-    # persist labels for the next run
-    save_labels(labels)
 
     # 3) Export AFTER scoring so Excel receives the filled AI fields
     convert_to_xlsx(scored_jobs)

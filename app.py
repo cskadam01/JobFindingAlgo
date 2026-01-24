@@ -8,6 +8,7 @@ from fastapi import Depends
 from sqlalchemy.orm import Session
 from database.config import get_db
 from database.models import Label
+from fastapi import HTTPException
 
 Base.metadata.create_all(bind=engine)
 
@@ -34,14 +35,28 @@ def root():
     return {"status": "ok", "service": "jobfinding-backend"}
 
 
+
+
+
+
+
 @app.get("/label", response_class=HTMLResponse)
-def label(job_id: str, label: int):
+def label(job_id: int, label: int, db: Session = Depends(get_db)):
     # label: 1 = érdekel, 0 = nem érdekel
-    labels_db = load_labels()
-    labels_db[job_id] = label
-    save_labels(labels_db)
+    if label not in (0, 1):
+        raise HTTPException(status_code=400, detail="label must be 0 or 1")
+
+    # van már címke ehhez a jobhoz?
+    existing = db.query(Label).filter(Label.job_id == job_id).order_by(Label.id.desc()).first()
+
+    if existing:
+        existing.label = label
+    else:
+        db.add(Label(job_id=job_id, label=label))
+
+    db.commit()
 
     return f"""
     <h3>Köszi!</h3>
-    <p>Mentve: job_id=<b>{job_id}</b>, label=<b>{label}</b></p>
+    <p>Mentve DB-be: job_id=<b>{job_id}</b>, label=<b>{label}</b></p>
     """

@@ -17,3 +17,4 @@
 /diakmunka/budapest/fejleszto---tesztelo/40905-data-analyst-intern
 /diakmunka/budapest/fejleszto---tesztelo/40904-operation-intern-dataflow-monitoring-and-deployment-squad
 /diakmunka/budapest/fejleszto---tesztelo/40916-adatkezelesi-gyakornok
+/diakmunka/budapest/fejleszto---tesztelo/40918-web-developer-intern-calibration-team
