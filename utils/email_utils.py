@@ -11,8 +11,8 @@ backend_base_url = os.getenv("BACKEND_URL")
 def send_job_email(job):
     subject = f"Új állás: {job.get('title')} ({job.get('ai_recommendation_1_10')}/10)"#
     job_id = job.get("job_id")  # egyszerű azonosító
-    yes_url = f"{backend_base_url}label?job_id={job_id}&label=1"
-    no_url = f"{backend_base_url}label?job_id={job_id}&label=0"
+    yes_url = f"{backend_base_url}/label?job_id={job_id}&label=1"
+    no_url = f"{backend_base_url}/label?job_id={job_id}&label=0"
     
 
     html = f"""
