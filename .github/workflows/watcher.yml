@@ -33,4 +33,5 @@ jobs:
           TO_EMAIL: ${{ secrets.TO_EMAIL }}
           BACKEND_URL: ${{ secrets.BACKEND_URL }}
         run: |
+          python -c "import os; u=os.getenv('DATABASE_URL',''); print('len', len(u), 'prefix', u.split('://')[0] if '://' in u else 'NO_SCHEME')"
           python main.py
