@@ -2,6 +2,14 @@ from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 from pathlib import Path
 import json
+from database.config import engine, Base
+import database.models
+from fastapi import Depends
+from sqlalchemy.orm import Session
+from database.config import get_db
+from database.models import Label
+
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
