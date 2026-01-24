@@ -1,17 +1,12 @@
 from sites.schonherz import read_schonherz
 from sites.muisz import read_muisz
 from utils.converter import convert_to_xlsx
-from utils.relevance import is_relevant
-from utils.email import send_job_email
+from utils.email_utils import send_job_email
 from ai.scorer import score_jobs
 import json
 from pathlib import Path
 import re
-from database.config import engine, Base
-import database.models
-from database.config import get_db
 from sqlalchemy.orm import Session
-from database.config import get_db
 from database.models import Label
 from database.config import SessionLocal
 

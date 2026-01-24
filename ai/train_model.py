@@ -1,6 +1,8 @@
 import pandas as pd
 from pathlib import Path
-
+from database.config import SessionLocal
+from sqlalchemy.orm import Session
+from database.models import Job, Label
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 import joblib
@@ -12,39 +14,37 @@ MODEL_PATH = BASE_DIR / "ai" / "model.pkl"
 VECTORIZER_PATH = BASE_DIR / "ai" / "vectorizer.pkl"
 
 def load_training_data():
-    # 1) Excel beolvasása
-    df = pd.read_excel(DATA_PATH)
 
-    # 2) Csak azokat a sorokat tartjuk meg, ahol van címke (0 vagy 1)
-    df = df.dropna(subset=["is_relevant"])
+   
 
-    # 3) Itt fűzzük össze a title + desc mezőket egyetlen szöveggé
-    df["text"] = (
-        df["title"].fillna("") + " " +
-        df["desc"].fillna("")
-    )
+    db: Session = SessionLocal()
+    try:
+        rows = db.query(Job, Label ).join(Label, Job.id == Label.job_id).all()
+        X = []
+        y = []
+        for job, label in rows:
+            title = job.title or ""
+            desc = job.desc or ""
+            text = title + " " + desc 
+            text = text.lower()
+            text = text.strip()
+            X.append(text)         
+            y.append(int(label.label))
 
-    # 4) Biztosítjuk, hogy string legyen, különben a .str műveletek hibázhatnak
-    df["text"] = df["text"].astype(str)
+        print("0.", X[0][:200])
+        print("1.", len(X))
+        print(set(y))
+        print("pos", sum(v==1 for v in y), "neg", sum(v==0 for v in y))
+        print("\n \n \n")
+        
+        return X, y
 
-    # 5) kisbetűsítés – Python == python
-    df["text"] = df["text"].str.lower()
 
-    # 6) felesleges szóközök levágása
-    df["text"] = df["text"].str.strip()
 
-    # 7) több szóköz / sortörés → egy szóköz
-    df["text"] = df["text"].str.replace(r"\s+", " ", regex=True)
+    except Exception as e:
+        print("Hiba a tanulási db connectionel", e)
 
-    # 8) X (szöveg) és y (címke) előkészítése
-    X = df["text"]
-    y = df["is_relevant"].astype(int)
-
-    print("Tanító minták száma:", len(df))
-    print("Pozitív minták:", (y == 1).sum())
-    print("Negatív minták:", (y == 0).sum())
-
-    return X, y
+    
 
 def build_tfidf(X):
     vectorizer = TfidfVectorizer()
