@@ -74,8 +74,8 @@ def main():
     # 2) Score the NEW jobs first (so ai_feedback / ai_recommendation columns get values)
     scored_jobs = score_jobs(all_jobs)
 
-    # Load previous manual labels (so they don't get lost between runs)
-    labels = load_labels()
+
+    
 
     # Map the scorer outputs into the Excel columns you want.
     # Your scorer currently fills ml_score / ml_prob, so we copy them into:
