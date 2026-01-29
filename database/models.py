@@ -19,7 +19,7 @@ class Job(Base):
     ai_score = Column(Float, nullable=True)
     ai_feedback = Column(Text, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    sent_email = Column(Boolean, default=False, nullable=False)
+    email_sent = Column(Boolean, default=False, nullable=False)
 
 class Label(Base):
     __tablename__ = "labels"
