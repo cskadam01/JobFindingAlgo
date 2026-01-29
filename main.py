@@ -1,3 +1,4 @@
+from fastapi.params import Query
 from sites.schonherz import read_schonherz
 from sites.muisz import read_muisz
 from utils.converter import convert_to_xlsx
@@ -7,7 +8,7 @@ import json
 from pathlib import Path
 import re
 from sqlalchemy.orm import Session
-from database.models import Label
+from database.models import Label, Job
 from database.config import SessionLocal
 
 
@@ -110,13 +111,13 @@ def main():
                 parts.append(f"ml_prob={job.get('ml_prob')}")
             job["ai_feedback"] = ", ".join(parts) if parts else None
 
-        db = SessionLocal()
-        try:
-            for job in scored_jobs:
-                job_id = save_to_db(job, db)
-                job["job_id"] = job_id
-        finally:
-            db.close()
+    db = SessionLocal()
+    try:
+        for job in scored_jobs:
+            job_id = save_to_db(job, db)
+            job["job_id"] = job_id
+    finally:
+        db.close()
         
 
 
@@ -126,10 +127,34 @@ def main():
 
     print("ez most ami kell \n", scored_jobs)
 
-    # Send email for each new scored job
-    for job in scored_jobs:
-        send_job_email(job)
-    print("Összes új állás:", len(all_jobs))
+    def pre_email_handle():
+        db = SessionLocal()
+        try:
+            for job in scored_jobs:
+                row = db.query(Job).filter(Job.link == job["link"]).first()
+
+               
+                if row is None:
+                    continue
+
+                
+                if row.email_sent is True:
+                    continue
+
+                # Send email for not-yet-emailed jobs
+                send_job_email(job)
+
+                # Mark as emailed AFTER successful send
+                row.email_sent = True
+                db.commit()
+                
+        finally:
+            db.close()
+
+    pre_email_handle()
+
+
+
 
 
 

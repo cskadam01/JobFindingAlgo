@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text, Float, DateTime
+from sqlalchemy import Column, Integer, String, Text, Float, DateTime, Boolean
 from sqlalchemy.sql import func
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
@@ -10,19 +10,16 @@ class Job(Base):
     __tablename__ = "jobs"
 
     id = Column(Integer, primary_key=True, index=True)
-
     source = Column(String(50), nullable=True)
     title = Column(String(255), nullable=False)
     link = Column(Text, nullable=False, unique=True)
-
     place = Column(String(255), nullable=True)
     wage = Column(String(255), nullable=True)
     desc = Column(Text, nullable=True)
-
     ai_score = Column(Float, nullable=True)
     ai_feedback = Column(Text, nullable=True)
-
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+    sent_email = Column(Boolean, default=False, nullable=False)
 
 class Label(Base):
     __tablename__ = "labels"
