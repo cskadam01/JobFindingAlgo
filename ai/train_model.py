@@ -1,6 +1,7 @@
+import numpy as np
 import pandas as pd
 from pathlib import Path
-from database.config import SessionLocal
+from database.config import  SessionLocal
 from sqlalchemy.orm import Session
 from database.models import Job, Label
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -54,6 +55,7 @@ def build_tfidf(X):
 
 if __name__ == "__main__":
     X, y = load_training_data()
+    y = np.array(y)
     vectorizer, X_vec = build_tfidf(X)
 
     model = LogisticRegression(max_iter=1000)
